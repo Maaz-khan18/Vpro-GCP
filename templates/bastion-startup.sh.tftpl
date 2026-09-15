@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+if ! id devops >/dev/null 2>&1; then
+  useradd -m -s /bin/bash devops
+fi
+
+echo 'devops ALL=(ALL) NOPASSWD:ALL' >/etc/sudoers.d/devops
+install -d -m 700 -o devops -g devops /home/devops/.ssh
+cat >/home/devops/.ssh/authorized_keys <<'KEY'
+${ssh_public_key}
+KEY
+chown devops:devops /home/devops/.ssh/authorized_keys
+chmod 600 /home/devops/.ssh/authorized_keys
